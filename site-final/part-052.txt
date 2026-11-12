@@ -1,0 +1,100 @@
+
+  try {
+    await addDoc(collection(db, "testimonials"), {
+      name: els.name.value.trim().slice(0, 80),
+      className: els.className.value.trim().slice(0, 40),
+      testimonial: testimonial.slice(0, 700),
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    localStorage.setItem("rafael_testimonial_last_submit", String(Date.now()));
+    els.form.reset();
+    showMessage("Obrigado. Seu depoimento foi enviado para análise e não ficará público automaticamente.");
+  } catch (error) {
+    console.error(error);
+    showMessage("Não foi possível enviar agora. Tente novamente em alguns instantes.", "error");
+  } finally {
+    els.submit.disabled = false;
+    els.submit.textContent = "Enviar depoimento";
+  }
+});
+
+async function loadAdminTestimonials(user) {
+  if (!user || !ADMIN_UIDS.includes(user.uid)) return;
+
+  els.adminList.innerHTML =
+    '<div class="testimonial-empty">Carregando depoimentos...</div>';
+
+  try {
+    const q = query(
+      collection(db, "testimonials"),
+      orderBy("createdAt", "desc"),
+      limit(100)
+    );
+    const snap = await getDocs(q);
+    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    els.adminStatus.textContent =
+      `${items.length} ${items.length === 1 ? "depoimento" : "depoimentos"}`;
+    els.adminIdentity.textContent = user.email || user.uid;
+
+    if (!items.length) {
+      els.adminList.innerHTML =
+        '<div class="testimonial-empty">Nenhum depoimento recebido ainda.</div>';
+      return;
+    }
+
+    els.adminList.innerHTML = items.map(item => {
+      const status = item.status || "pending";
+      const badge =
+        status === "approved"
+          ? '<span class="badge approved">Aprovado</span>'
+          : status === "rejected"
+          ? '<span class="badge rejected">Rejeitado</span>'
+          : '<span class="badge pending">Pendente</span>';
+
+      return `
+        <div class="admin-item" data-id="${escapeHtml(item.id)}">
+          <div class="admin-item-top">
+            <div>
+              <strong>${escapeHtml(item.name || "Anônimo")}</strong>
+              <div class="admin-meta">
+                ${escapeHtml(item.className || "Turma não informada")}
+                · ${formatDate(item.createdAt)}
+              </div>
+            </div>
+            ${badge}
+          </div>
+          <p>${escapeHtml(item.testimonial)}</p>
+          <div class="admin-item-actions">
+            <button class="btn-approve" data-action="approved">Aprovar</button>
+            <button class="btn-hide" data-action="pending">Ocultar</button>
+            <button class="btn-reject" data-action="rejected">Rejeitar</button>
+            <button class="btn-delete" data-action="delete">Excluir</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+    els.adminList.innerHTML =
+      '<div class="testimonial-empty">Erro ao carregar. Confira sua autorização e as regras do Firestore.</div>';
+  }
+}
+
+els.adminGoogleLoginBtn?.addEventListener("click", async () => {
+  if (!isConfigured) {
+    els.adminLoginError.textContent =
+      "Primeiro configure firebaseConfig e o UID do professor no HTML.";
+    els.adminLoginError.style.display = "block";
+    return;
+  }
+
+  try {
+    els.adminLoginError.style.display = "none";
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    console.error(error);
+    els.adminLoginError.textContent =
+      "Não foi possível entrar com Google. Confira se o provedor Google foi ativado no Firebase Authentication.";
