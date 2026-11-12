@@ -31,7 +31,7 @@
       const open = "https://www.canva.com/design/" + id + "/" + token + "/view";
       const card = document.createElement("article");
       card.className = "lesson-card";
-      card.innerHTML = '<div class="lesson-preview" style="position:relative;width:100%;aspect-ratio:16/9;background:#0b1b31;overflow:hidden"><iframe src="' + frame + '" title="Prévia da aula: ' + escapeText(title) + '" loading="lazy" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div><div class="lesson-content"><span class="lesson-subject">' + escapeText(subject) + '</span><h3>' + escapeText(title) + '</h3><div class="lesson-actions"><a href="' + open + '" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div>';
+      card.innerHTML = '<div class="lesson-preview" style="position:relative;width:100%;aspect-ratio:16/9;background:#0b1b31;overflow:hidden"><iframe src="' + frame + '" title="Prévia da aula: ' + escapeText(title) + '" loading="eager" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div><div class="lesson-content"><span class="lesson-subject">' + escapeText(subject) + '</span><h3>' + escapeText(title) + '</h3><div class="lesson-actions"><a href="' + open + '" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div>';
       if (grid.querySelector(".lesson-empty")) grid.innerHTML = "";
       grid.appendChild(card);
     });
