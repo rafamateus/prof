@@ -84,11 +84,10 @@
 <section id="contato" style="padding:64px 7%;background:#06101e;">
   <div style="max-width:1180px;margin:auto;">
     <h2>Contato</h2>
-    <p>Entre em contato pelos canais abaixo.</p>
+    <p>Fale comigo pelo Instagram.</p>
     
 <div class="contact-social">
-  <a href="mailto:rafael.mateus@prof_rafamateus">✉ rafael.mateus@prof_rafamateus</a>
-  <a href="https://www.instagram.com/prof_rafamateus/" target="_blank" rel="noopener">◎ @prof_rafamateus</a>
+  <a href="https://www.instagram.com/prof_rafamateus/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Rafael Mateus: @prof_rafamateus">◎ @prof_rafamateus</a>
 </div>
 
   </div>
