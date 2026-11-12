@@ -51,7 +51,7 @@ function safeCanvaUrl(raw, allowEmbed = false) {
     const validHost = /(^|\\.)canva\\.com$/i.test(u.hostname) || u.hostname === "canva.link";
     if (u.protocol !== "https:" || !validHost) return "";
     if (u.hostname !== "canva.link" && !u.pathname.includes("/design/")) return "";
-    if (allowEmbed && u.hostname !== "canva.link" && !u.searchParams.has("embed")) u.searchParams.set("embed", "");
+    if (allowEmbed && u.hostname !== "canva.link") { u.pathname = u.pathname.replace(/\\/edit\\/?$/, "/view"); u.search = ""; u.searchParams.set("embed", ""); }
     return u.toString();
   } catch { return ""; }
 }
@@ -102,28 +102,30 @@ function renderLessons(items) {
       const url = safeCanvaUrl(item.canvaUrl || item.url || "");
       const cover = item.coverData ? `<img class="lesson-cover" src="${item.coverData}" alt="Capa: ${title}" loading="lazy">` : `<div class="lesson-cover lesson-cover-placeholder"><span>✦</span><small>APRESENTAÇÃO</small></div>`;
       if (!url) return "";
-      return `<article class="lesson-card">${cover}<div class="lesson-content"><span class="lesson-subject">${escapeHtml(item.subject || "Aula")}</span><h3>${title}</h3><p>${description}</p><div class="lesson-actions"><a href="${url}" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div></article>`;
+      const embedUrl = safeCanvaUrl(item.embedUrl || url, true);
+      const preview = embedUrl ? `<div class="lesson-preview" style="position:relative;width:100%;aspect-ratio:16/9;background:#f3f4f6;overflow:hidden"><iframe src="${embedUrl}" title="Prévia da aula: ${title}" loading="lazy" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>` : cover;
+      return `<article class="lesson-card">${preview}<div class="lesson-content"><span class="lesson-subject">${escapeHtml(item.subject || "Aula")}</span><h3>${title}</h3><p>${description}</p><div class="lesson-actions"><a href="${url}" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div></article>`;
     }).join("") || '<div class="lesson-empty">Nenhum link válido disponível nesta turma.</div>';
   });
 }
 
 const starterLessons = [
-  {grade:"6ano",title:"Contribuições da Ciência",subject:"Ciências",canvaUrl:"https://canva.link/1oppp5ffja1ad79"},
-  {grade:"6ano",title:"Propriedades da Matéria",subject:"Ciências",canvaUrl:"https://canva.link/propriedades1"},
-  {grade:"6ano",title:"Transformações da Matéria",subject:"Ciências",canvaUrl:"https://canva.link/transform1"},
-  {grade:"6ano",title:"Terra e Universo",subject:"Ciências",canvaUrl:"https://canva.link/universo1"},
-  {grade:"6ano",title:"Sistemas do Corpo Humano",subject:"Ciências",canvaUrl:"https://canva.link/pch1"},
-  {grade:"9ano",title:"Ondas",subject:"Física",canvaUrl:"https://canva.link/ondas126"},
-  {grade:"9ano",title:"Ondas Sonoras",subject:"Física",canvaUrl:"https://canva.link/som126"},
-  {grade:"9ano",title:"Ondas Eletromagnéticas",subject:"Física",canvaUrl:"https://canva.link/eletromag126"},
-  {grade:"9ano",title:"Herança Genética",subject:"Ciências",canvaUrl:"https://canva.link/hergen"},
-  {grade:"1medio",title:"Membrana Plasmática",subject:"Biologia",canvaUrl:"https://canva.link/membrana126"},
-  {grade:"1medio",title:"Citoplasma",subject:"Biologia",canvaUrl:"https://canva.link/citoplasma126"},
-  {grade:"1medio",title:"Divisão Celular",subject:"Biologia",canvaUrl:"https://canva.link/divcel"},
-  {grade:"1medio",title:"Anatomia e Fisiologia dos Sistemas Reprodutores Humanos",subject:"Biologia",canvaUrl:"https://canva.link/sisrep"},
-  {grade:"1medio",title:"Métodos Contraceptivos",subject:"Biologia",canvaUrl:"https://canva.link/metcon"},
-  {grade:"1medio",title:"Metabolismo Energético",subject:"Biologia",canvaUrl:"https://canva.link/lxo8sxutcagp03x"},
-  {grade:"1medio",title:"Infecções Sexualmente Transmissíveis",subject:"Biologia",canvaUrl:"https://canva.link/uynmbx23wg4eik2"}
+  {grade:"6ano",title:"Contribuições da Ciência",subject:"Ciências",canvaUrl:"https://www.canva.com/design/DAHE_yhcUgY/x175RsWgO16BAdGI4uxHuQ/edit"},
+  {grade:"6ano",title:"Propriedades da Matéria",subject:"Ciências",canvaUrl:"https://www.canva.com/design/DAHLEMsUWXM/25BtImklVJpnaXSNu06xaQ/edit"},
+  {grade:"6ano",title:"Transformações da Matéria",subject:"Ciências",canvaUrl:"https://www.canva.com/design/DAHN6ByyHCE/NFJqEsO5HNDufckf_1ZucA/edit"},
+  {grade:"6ano",title:"Terra e Universo",subject:"Ciências",canvaUrl:"https://www.canva.com/design/DAHRYhdxlxE/6Ub4fQAZyki522FS0v7lCw/edit"},
+  {grade:"6ano",title:"Sistemas do Corpo Humano",subject:"Ciências",canvaUrl:"https://www.canva.com/design/DAHZf9nmLb8/YIIEEb9JWEflxi7AwykssQ/edit"},
+  {grade:"9ano",title:"Ondas",subject:"Física",canvaUrl:"https://www.canva.com/design/DAHK4FEXNtA/jkaa5iSkji3JZeuoJYjEYQ/edit"},
+  {grade:"9ano",title:"Ondas Sonoras",subject:"Física",canvaUrl:"https://www.canva.com/design/DAHMMpKW8Ro/8P8vmg4SMMQAMFDUQOizjQ/edit"},
+  {grade:"9ano",title:"Ondas Eletromagnéticas",subject:"Física",canvaUrl:"https://www.canva.com/design/DAHNgm9-MjA/nzOcCVvsuF10a6V5kBWXaQ/edit"},
+  {grade:"9ano",title:"Herança Genética",subject:"Ciências",canvaUrl:"https://www.canva.com/design/DAGvcKqCmW0/N_1gHQHfJNMPXM_bSMIvdw/edit"},
+  {grade:"1medio",title:"Membrana Plasmática",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAGqDDIePrA/JG67f8o0jjY7L0b_66-agQ/edit"},
+  {grade:"1medio",title:"Citoplasma",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAGqJdR6fPg/pwwkKeXP_BtKrXNOig8PiA/edit"},
+  {grade:"1medio",title:"Divisão Celular",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAHPrlKuQvQ/yn7ca-zAfe_HrP9b8xWVCQ/edit"},
+  {grade:"1medio",title:"Anatomia e Fisiologia dos Sistemas Reprodutores Humanos",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAHU1-r9dEY/CbTrYk7zmKiZDu7kgA7ong/edit"},
+  {grade:"1medio",title:"Métodos Contraceptivos",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAHWIuVZMQw/q53W3gsT8uC2xoaHC25mSw/edit"},
+  {grade:"1medio",title:"Metabolismo Energético",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAHR2R260kg/vhh5svTiLwcw-FLIAi2CaQ/edit"},
+  {grade:"1medio",title:"Infecções Sexualmente Transmissíveis",subject:"Biologia",canvaUrl:"https://www.canva.com/design/DAHW0LO4rmw/rpoCS-EPVJ3CDP23RIQ7MA/edit"}
 ];
 
 // Os links curtos do Canva abrem em nova aba. A prévia incorporada só é usada
