@@ -86,15 +86,144 @@ els.lessonImage?.addEventListener("change", async () => {
 function renderLessons(items) {
   const gradeKeys = ["6ano", "9ano", "1medio", "2medio", "3medio"];
   const labels = {"6ano":"6º ano", "9ano":"9º ano", "1medio":"1º ano", "2medio":"2º ano", "3medio":"3º ano"};
-  const grids = Object.fromEntries(gradeKeys.map(key => [key, els.lessonGrid.querySelector(`[data-grade-grid="${key}"]`)]));
-  gradeKeys.forEach(key => { if (grids[key]) grids[key].innerHTML = '<div class="lesson-empty">As aulas desta turma aparecerão aqui.</div>'; });
+  const grids = Object.fromEntries(gradeKeys.map(key => [key, els.lessonGrid?.querySelector(`[data-grade-grid="${key}"]`)]));
+  gradeKeys.forEach(key => { if (grids[key]) grids[key].innerHTML = ""; });
   const grouped = Object.fromEntries(gradeKeys.map(key => [key, []]));
-  items.forEach(item => { const key = gradeKeys.includes(item.grade) ? item.grade : "6ano"; grouped[key].push(item); });
+  (items || []).forEach(item => { if (item.published === false) return; const key = gradeKeys.includes(item.grade) ? item.grade : "6ano"; grouped[key].push(item); });
   gradeKeys.forEach(key => {
     if (!grids[key]) return;
     if (!grouped[key].length) {
-      grids[key].innerHTML = `<div class="lesson-empty">As aulas do ${labels[key]} aparecerão aqui. Aguarde as novidades!</div>`;
+      grids[key].innerHTML = `<div class="lesson-empty">As aulas do ${labels[key]} aparecerão aqui em breve.</div>`;
       return;
     }
     grids[key].innerHTML = grouped[key].map(item => {
       const title = escapeHtml(item.title || "Aula");
+      const description = escapeHtml(item.description || "Apresentação de Ciências.");
+      const url = safeCanvaUrl(item.canvaUrl || item.url || "");
+      const cover = item.coverData ? `<img class="lesson-cover" src="${item.coverData}" alt="Capa: ${title}" loading="lazy">` : `<div class="lesson-cover lesson-cover-placeholder"><span>✦</span><small>APRESENTAÇÃO</small></div>`;
+      if (!url) return "";
+      return `<article class="lesson-card">${cover}<div class="lesson-content"><span class="lesson-subject">${escapeHtml(item.subject || "Aula")}</span><h3>${title}</h3><p>${description}</p><div class="lesson-actions"><a href="${url}" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div></article>`;
+    }).join("") || '<div class="lesson-empty">Nenhum link válido disponível nesta turma.</div>';
+  });
+}
+
+const starterLessons = [
+  {grade:"6ano",title:"Contribuições da Ciência",subject:"Ciências",canvaUrl:"https://canva.link/1oppp5ffja1ad79"},
+  {grade:"6ano",title:"Propriedades da Matéria",subject:"Ciências",canvaUrl:"https://canva.link/propriedades1"},
+  {grade:"6ano",title:"Transformações da Matéria",subject:"Ciências",canvaUrl:"https://canva.link/transform1"},
+  {grade:"6ano",title:"Terra e Universo",subject:"Ciências",canvaUrl:"https://canva.link/universo1"},
+  {grade:"6ano",title:"Sistemas do Corpo Humano",subject:"Ciências",canvaUrl:"https://canva.link/pch1"},
+  {grade:"9ano",title:"Ondas",subject:"Física",canvaUrl:"https://canva.link/ondas126"},
+  {grade:"9ano",title:"Ondas Sonoras",subject:"Física",canvaUrl:"https://canva.link/som126"},
+  {grade:"9ano",title:"Ondas Eletromagnéticas",subject:"Física",canvaUrl:"https://canva.link/eletromag126"},
+  {grade:"9ano",title:"Herança Genética",subject:"Ciências",canvaUrl:"https://canva.link/hergen"},
+  {grade:"1medio",title:"Membrana Plasmática",subject:"Biologia",canvaUrl:"https://canva.link/membrana126"},
+  {grade:"1medio",title:"Citoplasma",subject:"Biologia",canvaUrl:"https://canva.link/citoplasma126"},
+  {grade:"1medio",title:"Divisão Celular",subject:"Biologia",canvaUrl:"https://canva.link/divcel"},
+  {grade:"1medio",title:"Anatomia e Fisiologia dos Sistemas Reprodutores Humanos",subject:"Biologia",canvaUrl:"https://canva.link/sisrep"},
+  {grade:"1medio",title:"Métodos Contraceptivos",subject:"Biologia",canvaUrl:"https://canva.link/metcon"},
+  {grade:"1medio",title:"Metabolismo Energético",subject:"Biologia",canvaUrl:"https://canva.link/lxo8sxutcagp03x"},
+  {grade:"1medio",title:"Infecções Sexualmente Transmissíveis",subject:"Biologia",canvaUrl:"https://canva.link/uynmbx23wg4eik2"}
+];
+
+// Os links curtos do Canva abrem em nova aba. A prévia incorporada só é usada
+// quando o Canva fornece um endereço /design/... compatível.
+function canvaUrlIsAllowed(raw) {
+  try {
+    const u = new URL(raw);
+    return u.protocol === "https:" && (/(^|\\.)canva\\.com$/i.test(u.hostname) || u.hostname === "canva.link");
+  } catch { return false; }
+}
+
+async function loadLessons() {
+  let items = [...starterLessons];
+  if (isConfigured && db) {
+    try {
+      const snap = await getDocs(query(collection(db, "lessons"), orderBy("createdAt", "desc"), limit(100)));
+      const remote = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(x => x.published !== false);
+      // Aulas cadastradas pelo professor aparecem antes das aulas iniciais.
+      items = [...remote, ...starterLessons];
+    } catch (error) { console.warn("Não foi possível carregar aulas adicionais do Firestore.", error); }
+  }
+  renderLessons(items);
+}
+
+function updateLessonAdmin(user) {
+  const allowed = !!user && ADMIN_UIDS.includes(user.uid);
+  if (els.lessonAdmin) els.lessonAdmin.style.display = allowed ? "block" : "none";
+  if (els.adminLocked) els.adminLocked.style.display = allowed ? "none" : "block";
+  if (els.adminPanel) els.adminPanel.style.display = allowed ? "block" : "none";
+  if (allowed) {
+    if (els.adminIdentity) els.adminIdentity.textContent = user.email || user.uid;
+    loadAdminTestimonials(user);
+  }
+}
+
+els.lessonCanvaUrl?.addEventListener("change", () => {
+  const raw = els.lessonCanvaUrl.value.trim();
+  if (raw && !canvaUrlIsAllowed(raw)) els.lessonFormStatus.textContent = "Use um link seguro do Canva (canva.link ou canva.com).";
+});
+
+els.lessonForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const user = auth?.currentUser;
+  if (!isConfigured || !user || !ADMIN_UIDS.includes(user.uid)) {
+    els.lessonFormStatus.textContent = "Entre como professor para cadastrar aulas.";
+    return;
+  }
+  const rawUrl = els.lessonCanvaUrl.value.trim();
+  if (!canvaUrlIsAllowed(rawUrl)) {
+    els.lessonFormStatus.textContent = "Informe um link válido e seguro do Canva.";
+    return;
+  }
+  if (!selectedCoverData) {
+    els.lessonFormStatus.textContent = "Adicione uma imagem de capa.";
+    return;
+  }
+  els.lessonSaveBtn.disabled = true;
+  els.lessonFormStatus.textContent = "Salvando aula...";
+  try {
+    await addDoc(collection(db, "lessons"), {
+      title: els.lessonTitle.value.trim().slice(0,100),
+      subject: els.lessonSubject.value,
+      grade: els.lessonGrade.value,
+      description: els.lessonDescription.value.trim().slice(0,300),
+      canvaUrl: rawUrl,
+      coverData: selectedCoverData,
+      published: !!els.lessonPublished.checked,
+      createdAt: serverTimestamp(),
+      createdBy: user.uid
+    });
+    els.lessonForm.reset();
+    selectedCoverData = "";
+    if (els.lessonImagePreview) { els.lessonImagePreview.src = ""; els.lessonImagePreview.style.display = "none"; }
+    els.lessonFormStatus.textContent = "Aula salva com sucesso.";
+    await loadLessons();
+  } catch (error) {
+    console.error(error);
+    els.lessonFormStatus.textContent = "Não foi possível salvar. Verifique as regras do Firestore.";
+  } finally { els.lessonSaveBtn.disabled = false; }
+});
+
+if (isConfigured) {
+  try {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+    provider = new GoogleAuthProvider();
+    onAuthStateChanged(auth, user => {
+      const allowed = !!user && ADMIN_UIDS.includes(user.uid);
+      if (els.adminLocked) els.adminLocked.style.display = allowed ? "none" : "block";
+      if (els.adminPanel) els.adminPanel.style.display = allowed ? "block" : "none";
+      if (els.lessonAdmin) els.lessonAdmin.style.display = allowed ? "block" : "none";
+      if (allowed) {
+        if (els.adminIdentity) els.adminIdentity.textContent = user.email || user.uid;
+        loadAdminTestimonials(user);
+      }
+    });
+  } catch (error) { console.error("Falha ao iniciar Firebase:", error); }
+} else {
+  if (els.setupNotice) els.setupNotice.style.display = "block";
+  if (els.lessonAdmin) els.lessonAdmin.style.display = "none";
+}
+loadLessons();
