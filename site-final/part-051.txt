@@ -1,0 +1,100 @@
+  }
+}
+
+function showMessage(text, type = "success") {
+  if (!els.success) return;
+  els.success.textContent = text;
+  els.success.style.display = "block";
+  els.success.style.background =
+    type === "error" ? "rgba(122,38,48,.16)" : "rgba(31,111,56,.14)";
+  els.success.style.borderColor =
+    type === "error" ? "rgba(190,70,82,.35)" : "rgba(58,160,86,.35)";
+  els.success.style.color = type === "error" ? "#f1bec4" : "#c8f2d2";
+}
+
+function openModal() {
+  els.adminModal?.classList.add("open");
+  els.adminModal?.setAttribute("aria-hidden", "false");
+}
+function closeModal() {
+  els.adminModal?.classList.remove("open");
+  els.adminModal?.setAttribute("aria-hidden", "true");
+}
+
+els.openAdmin?.addEventListener("click", openModal);
+els.closeAdmin?.addEventListener("click", closeModal);
+els.adminModal?.addEventListener("click", (e) => {
+  if (e.target === els.adminModal) closeModal();
+});
+
+async function loadApprovedTestimonials() {
+  if (!isConfigured) {
+    els.setupNotice.style.display = "block";
+    els.cards.innerHTML =
+      '<div class="testimonial-empty">Os depoimentos aprovados aparecerão aqui após a configuração do Firebase.</div>';
+    els.approvedCount.textContent = "Aguardando configuração";
+    return;
+  }
+
+  try {
+    const q = query(
+      collection(db, "testimonials"),
+      where("status", "==", "approved"),
+      orderBy("createdAt", "desc"),
+      limit(4)
+    );
+    const snap = await getDocs(q);
+    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    els.approvedCount.textContent =
+      `${items.length} ${items.length === 1 ? "publicado" : "publicados"}`;
+
+    if (!items.length) {
+      els.cards.innerHTML =
+        '<div class="testimonial-empty">Os primeiros depoimentos aprovados aparecerão aqui.</div>';
+      return;
+    }
+
+    els.cards.innerHTML = items.map(item => {
+      const author = escapeHtml(item.name || "Aluno(a)");
+      const className = item.className ? ` · ${escapeHtml(item.className)}` : "";
+      return `
+        <article class="testimonial-card">
+          <p>“${escapeHtml(item.testimonial)}”</p>
+          <footer>
+            <span class="student-name">${author}${className}</span>
+            <span>${formatDate(item.createdAt)}</span>
+          </footer>
+        </article>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+    els.cards.innerHTML =
+      '<div class="testimonial-empty">Não foi possível carregar os depoimentos agora.</div>';
+    els.approvedCount.textContent = "Indisponível";
+  }
+}
+
+els.form?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!isConfigured) {
+    els.setupNotice.style.display = "block";
+    showMessage("O envio será ativado assim que o professor concluir a configuração do Firebase.", "error");
+    return;
+  }
+
+  if (els.honeypot.value.trim()) return; // provável bot
+
+  const testimonial = els.text.value.trim();
+  if (!testimonial) return;
+
+  const lastSubmit = Number(localStorage.getItem("rafael_testimonial_last_submit") || 0);
+  if (Date.now() - lastSubmit < 60_000) {
+    showMessage("Aguarde um minuto antes de enviar outro depoimento.", "error");
+    return;
+  }
+
+  els.submit.disabled = true;
+  els.submit.textContent = "Enviando...";
