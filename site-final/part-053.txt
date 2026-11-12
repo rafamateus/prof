@@ -48,10 +48,10 @@ let activeAdmin = null;
 function safeCanvaUrl(raw, allowEmbed = false) {
   try {
     const u = new URL(raw);
-    const validHost = /(^|\\.)canva\\.com$/i.test(u.hostname) || u.hostname === "canva.link";
+    const validHost = /(^|\.)canva\.com$/i.test(u.hostname) || u.hostname === "canva.link";
     if (u.protocol !== "https:" || !validHost) return "";
     if (u.hostname !== "canva.link" && !u.pathname.includes("/design/")) return "";
-    if (allowEmbed && u.hostname !== "canva.link") { u.pathname = u.pathname.replace(/\\/edit\\/?$/, "/view"); u.search = ""; u.searchParams.set("embed", ""); }
+    if (allowEmbed && u.hostname !== "canva.link") { u.pathname = u.pathname.replace(/\/edit\/?$/, "/view"); u.search = ""; u.searchParams.set("embed", ""); }
     return u.toString();
   } catch { return ""; }
 }
@@ -133,7 +133,7 @@ const starterLessons = [
 function canvaUrlIsAllowed(raw) {
   try {
     const u = new URL(raw);
-    return u.protocol === "https:" && (/(^|\\.)canva\\.com$/i.test(u.hostname) || u.hostname === "canva.link");
+    return u.protocol === "https:" && (/(^|\.)canva\.com$/i.test(u.hostname) || u.hostname === "canva.link");
   } catch { return false; }
 }
 
