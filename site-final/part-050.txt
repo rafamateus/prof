@@ -1,0 +1,100 @@
+
+
+
+
+
+
+<script type="module">
+/*
+  ============================================================
+  CONFIGURAÇÃO DO FIREBASE
+  1) Crie um projeto no Firebase.
+  2) Adicione um app Web.
+  3) Cole abaixo o objeto firebaseConfig fornecido pelo console.
+  4) Depois de entrar como professor pela primeira vez, copie seu UID
+     no Firebase Authentication e coloque-o em ADMIN_UIDS.
+  ============================================================
+*/
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, getDocs, query, where,
+  orderBy, serverTimestamp, doc, updateDoc, deleteDoc, limit
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
+
+// IMPORTANTE: substitua pelo UID real da sua conta Google autorizada.
+// Exemplo: const ADMIN_UIDS = ["abc123SEU_UIDxyz"];
+const ADMIN_UIDS = ["COLE_AQUI_O_UID_DO_PROFESSOR"];
+
+const els = {
+  form: document.getElementById("testimonialForm"),
+  name: document.getElementById("testimonialName"),
+  className: document.getElementById("testimonialClass"),
+  text: document.getElementById("testimonialText"),
+  honeypot: document.getElementById("testimonialWebsite"),
+  submit: document.getElementById("testimonialSubmit"),
+  success: document.getElementById("testimonialSuccess"),
+  setupNotice: document.getElementById("firebaseSetupNotice"),
+  cards: document.getElementById("testimonialCards"),
+  approvedCount: document.getElementById("approvedCount"),
+  adminModal: document.getElementById("adminModal"),
+  openAdmin: document.getElementById("openAdmin"),
+  closeAdmin: document.getElementById("closeAdmin"),
+  adminLocked: document.getElementById("adminLocked"),
+  adminPanel: document.getElementById("adminPanel"),
+  adminGoogleLoginBtn: document.getElementById("adminGoogleLoginBtn"),
+  adminLoginError: document.getElementById("adminLoginError"),
+  adminStatus: document.getElementById("adminStatus"),
+  adminIdentity: document.getElementById("adminIdentity"),
+  adminList: document.getElementById("adminList"),
+  adminLogoutBtn: document.getElementById("adminLogoutBtn"),
+  lessonAdmin: document.getElementById("lessonAdmin"),
+  lessonForm: document.getElementById("lessonForm"),
+  lessonGrid: document.getElementById("lessonGrid"),
+  lessonTitle: document.getElementById("lessonTitle"),
+  lessonSubject: document.getElementById("lessonSubject"),
+  lessonGrade: document.getElementById("lessonGrade"),
+  lessonDescription: document.getElementById("lessonDescription"),
+  lessonCanvaUrl: document.getElementById("lessonCanvaUrl"),
+  lessonEmbedUrl: document.getElementById("lessonEmbedUrl"),
+  lessonImage: document.getElementById("lessonImage"),
+  lessonImagePreview: document.getElementById("lessonImagePreview"),
+  lessonPublished: document.getElementById("lessonPublished"),
+  lessonSaveBtn: document.getElementById("lessonSaveBtn"),
+  lessonFormStatus: document.getElementById("lessonFormStatus")
+};
+
+const isConfigured =
+  firebaseConfig.apiKey !== "COLE_AQUI" &&
+  firebaseConfig.projectId !== "COLE_AQUI" &&
+  ADMIN_UIDS[0] !== "COLE_AQUI_O_UID_DO_PROFESSOR";
+
+let app, db, auth, provider;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatDate(value) {
+  try {
+    const date = value?.toDate ? value.toDate() : new Date(value);
+    return new Intl.DateTimeFormat("pt-BR").format(date);
+  } catch {
+    return "";
