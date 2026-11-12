@@ -6,6 +6,14 @@ G1mMmdgRnxpG4/AZVbMyPsQjkORBYGiBMd1Td85nuYbIqCGr8li016dTpdVMlqrhEZouUMikQdW5gbqo
       <h2>Aulas e apresentações</h2>
       <p>Explore as apresentações de Ciências e Biologia. Escolha sua série e abra a aula completa no Canva.</p>
     </div>
+    <div class="lesson-filter" role="group" aria-label="Filtrar aulas por série">
+      <button type="button" class="grade-filter-btn active" data-grade-filter="all" aria-pressed="true">Todas as séries</button>
+      <button type="button" class="grade-filter-btn" data-grade-filter="6ano" aria-pressed="false">6º ano</button>
+      <button type="button" class="grade-filter-btn" data-grade-filter="9ano" aria-pressed="false">9º ano</button>
+      <button type="button" class="grade-filter-btn" data-grade-filter="1medio" aria-pressed="false">1º ano EM</button>
+      <button type="button" class="grade-filter-btn" data-grade-filter="2medio" aria-pressed="false">2º ano EM</button>
+      <button type="button" class="grade-filter-btn" data-grade-filter="3medio" aria-pressed="false">3º ano EM</button>
+    </div>
     <div class="grade-sections" id="lessonGrid">
       <section class="grade-section">
         <h3 class="grade-heading"><span>6º ano</span><small>Ensino Fundamental</small></h3>
@@ -55,3 +63,31 @@ G1mMmdgRnxpG4/AZVbMyPsQjkORBYGiBMd1Td85nuYbIqCGr8li016dTpdVMlqrhEZouUMikQdW5gbqo
           <div>
             <label for="testimonialName">Nome <span style="color:#738291">(opcional)</span></label>
             <input id="testimonialName" type="text" maxlength="80" placeholder="Seu nome" autocomplete="name">
+<style>
+.lessons-section .lesson-filter{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 34px}
+.lessons-section .grade-filter-btn{border:1px solid rgba(132,169,207,.35);border-radius:999px;padding:10px 16px;background:rgba(16,39,66,.72);color:#dce9f7;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.lessons-section .grade-filter-btn:hover{border-color:#7db7ef;transform:translateY(-1px)}
+.lessons-section .grade-filter-btn.active{background:#d5eaff;color:#102b48;border-color:#d5eaff}
+.lessons-section .grade-section[hidden]{display:none!important}
+@media(max-width:600px){.lessons-section .lesson-filter{gap:8px}.lessons-section .grade-filter-btn{padding:9px 12px;font-size:.82rem}}
+</style>
+<script>
+(function(){
+ const root=document.getElementById("aulas");
+ if(!root)return;
+ const buttons=[...root.querySelectorAll("[data-grade-filter]")];
+ const sections=[...root.querySelectorAll(".grade-section")];
+ buttons.forEach(button=>button.addEventListener("click",()=>{
+  const selected=button.dataset.gradeFilter;
+  buttons.forEach(item=>{
+   const active=item===button;
+   item.classList.toggle("active",active);
+   item.setAttribute("aria-pressed",String(active));
+  });
+  sections.forEach(section=>{
+   const grid=section.querySelector("[data-grade-grid]");
+   section.hidden=selected!=="all"&&grid?.dataset.gradeGrid!==selected;
+  });
+ }));
+})();
+</script>
