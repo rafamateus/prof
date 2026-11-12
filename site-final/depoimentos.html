@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>Enviar depoimento | Rafael Mateus</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;padding:28px 16px;background:linear-gradient(145deg,#07111f,#101d30);color:#f4f7fb;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center}
+    main{width:min(100%,680px);padding:clamp(22px,5vw,42px);border:1px solid #ffffff20;border-radius:22px;background:#ffffff08;box-shadow:0 24px 70px #0006}
+    .kicker{color:#f08080;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.1;margin:10px 0}
+    p{color:#b9c6d5}
+    label{display:block;margin:18px 0 7px;font-weight:650}
+    input,select,textarea{width:100%;padding:14px;border:1px solid #ffffff2b;border-radius:12px;background:#081728;color:#fff;font:inherit}
+    textarea{min-height:160px;resize:vertical}
+    input:focus,select:focus,textarea:focus{outline:2px solid #67b77b;outline-offset:2px}
+    button{width:100%;margin-top:22px;padding:15px;border:0;border-radius:12px;background:#238a43;color:white;font:inherit;font-weight:800;cursor:pointer}
+    button:hover{background:#2b9d50}
+    .note{font-size:.88rem;color:#94a6b9;margin-top:18px}
+    a{color:#a8d8ff}
+    .hp{position:absolute;left:-5000px}
+  </style>
+</head>
+<body>
+  <main>
+    <span class="kicker">Espaço do estudante</span>
+    <h1>Compartilhe seu depoimento</h1>
+    <p>Conte como foi sua experiência com as aulas e os materiais. Sua mensagem será enviada diretamente ao professor para leitura e aprovação. Ela não será publicada automaticamente.</p>
+    <form action="https://formsubmit.co/rafaelhenrique.gnr@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Novo depoimento recebido pelo site">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
+      <label for="student-name">Seu nome</label>
+      <input id="student-name" name="Nome" maxlength="80" required autocomplete="name" placeholder="Como podemos chamar você?">
+      <label for="student-class">Sua turma</label>
+      <select id="student-class" name="Turma" required>
+        <option value="">Selecione sua turma</option>
+        <option>6º ano — Ensino Fundamental</option>
+        <option>9º ano — Ensino Fundamental</option>
+        <option>1º ano — Ensino Médio</option>
+        <option>2º ano — Ensino Médio</option>
+        <option>3º ano — Ensino Médio</option>
+        <option>Outra turma</option>
+      </select>
+      <label for="student-message">Seu depoimento</label>
+      <textarea id="student-message" name="Depoimento" maxlength="1200" required placeholder="Escreva aqui sua opinião sobre as aulas..."></textarea>
+      <button type="submit">Enviar depoimento</button>
+    </form>
+    <p class="note">Ao enviar, sua mensagem será encaminhada ao professor. Informe apenas o que deseja compartilhar; não inclua telefone, endereço ou outros dados pessoais. <a href="../">Voltar ao site</a>.</p>
+  </main>
+</body>
+</html>
