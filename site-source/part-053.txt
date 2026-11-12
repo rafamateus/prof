@@ -1,0 +1,27 @@
+  onAuthStateChanged(auth, async (user) => {
+    const isAdmin = !!user && ADMIN_UIDS.includes(user.uid);
+
+    if (isAdmin) {
+      els.adminLocked.style.display = "none";
+      els.adminPanel.style.display = "block";
+      await loadAdminTestimonials(user);
+    } else {
+      els.adminLocked.style.display = "block";
+      els.adminPanel.style.display = "none";
+
+      if (user && !isAdmin) {
+        els.adminLoginError.textContent =
+          "Esta conta Google não está autorizada como professor.";
+        els.adminLoginError.style.display = "block";
+        await signOut(auth);
+      }
+    }
+  });
+} else {
+  els.setupNotice.style.display = "block";
+}
+
+loadApprovedTestimonials();
+</script>
+
+</body></html>
