@@ -4,7 +4,26 @@
 (async()=>{try{
 const files=["site-final/part-001.txt","site-final/part-002.txt","site-final/part-003.txt","site-final/part-004.txt","site-final/part-005.txt","site-final/part-006.txt","site-final/part-007.txt","site-final/part-008.txt","site-final/part-009.txt","site-final/part-010.txt","site-final/part-011.txt","site-final/part-012.txt","site-final/part-013.txt","site-final/part-014.txt","site-final/part-015.txt","site-final/part-016.txt","site-final/part-017.txt","site-final/part-018.txt","site-final/part-019.txt","site-final/part-020.txt","site-final/part-021.txt","site-final/part-022.txt","site-final/part-023.txt","site-final/part-024.txt","site-final/part-025.txt","site-final/part-026.txt","site-final/part-027.txt","site-final/part-028.txt","site-final/part-029.txt","site-final/part-030.txt","site-final/part-031.txt","site-final/part-032.txt","site-final/part-033.txt","site-final/part-034.txt","site-final/part-035.txt","site-final/part-036.txt","site-final/part-037.txt","site-final/part-038.txt","site-final/part-039.txt","site-final/part-040.txt","site-final/part-041.txt","site-final/part-042.txt","site-final/part-043.txt","site-final/part-044.txt","site-final/part-045.txt","site-final/part-046.txt","site-final/part-047.txt","site-final/part-048.txt","site-final/part-049.txt","site-final/part-050.txt","site-final/part-051.txt","site-final/part-052.txt","site-final/part-053.txt"];
 const chunks=await Promise.all(files.map(async path=>{const r=await fetch(path);if(!r.ok)throw new Error(path);return r.text()}));
-document.open();document.write(chunks.join(""));document.close();
+const fallback = '<script>(function(){const lessons=[
+["6ano","Contribuições da Ciência","Ciências","DAHE_yhcUgY","x175RsWgO16BAdGI4uxHuQ"],
+["6ano","Propriedades da Matéria","Ciências","DAHLEMsUWXM","25BtImklVJpnaXSNu06xaQ"],
+["6ano","Transformações da Matéria","Ciências","DAHN6ByyHCE","NFJqEsO5HNDufckf_1ZucA"],
+["6ano","Terra e Universo","Ciências","DAHRYhdxlxE","6Ub4fQAZyki522FS0v7lCw"],
+["6ano","Sistemas do Corpo Humano","Ciências","DAHZf9nmLb8","YIIEEb9JWEflxi7AwykssQ"],
+["9ano","Ondas","Física","DAHK4FEXNtA","jkaa5iSkji3JZeuoJYjEYQ"],
+["9ano","Ondas Sonoras","Física","DAHMMpKW8Ro","8P8vmg4SMMQAMFDUQOizjQ"],
+["9ano","Ondas Eletromagnéticas","Física","DAHNgm9-MjA","nzOcCVvsuF10a6V5kBWXaQ"],
+["9ano","Herança Genética","Ciências","DAGvcKqCmW0","N_1gHQHfJNMPXM_bSMIvdw"],
+["1medio","Membrana Plasmática","Biologia","DAGqDDIePrA","JG67f8o0jjY7L0b_66-agQ"],
+["1medio","Citoplasma","Biologia","DAGqJdR6fPg","pwwkKeXP_BtKrXNOig8PiA"],
+["1medio","Divisão Celular","Biologia","DAHPrlKuQvQ","yn7ca-zAfe_HrP9b8xWVCQ"],
+["1medio","Anatomia e Fisiologia dos Sistemas Reprodutores Humanos","Biologia","DAHU1-r9dEY","CbTrYk7zmKiZDu7kgA7ong"],
+["1medio","Métodos Contraceptivos","Biologia","DAHWIuVZMQw","q53W3gsT8uC2xoaHC25mSw"],
+["1medio","Metabolismo Energético","Biologia","DAHR2R260kg","vhh5svTiLwcw-FLIAi2CaQ"],
+["1medio","Infecções Sexualmente Transmissíveis","Biologia","DAHW0LO4rmw","rpoCS-EPVJ3CDP23RIQ7MA"]];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",String.fromCharCode(34):"&quot;","'":"&#39;"}[c]));
+lessons.forEach(([grade,title,subject,id,token])=>{const grid=document.querySelector("[data-grade-grid="+grade+"]");if(!grid)return;const card=document.createElement("article");card.className="lesson-card";const preview=document.createElement("div");preview.className="lesson-preview";preview.style.cssText="position:relative;width:100%;aspect-ratio:16/9;background:#0b1b31;overflow:hidden";const frame=document.createElement("iframe");frame.src="https://www.canva.com/design/"+id+"/"+token+"/view?embed";frame.title="Prévia da aula: "+title;frame.loading="lazy";frame.allow="fullscreen";frame.allowFullscreen=true;frame.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0";preview.appendChild(frame);const body=document.createElement("div");body.className="lesson-content";const tag=document.createElement("span");tag.className="lesson-subject";tag.textContent=subject;const h=document.createElement("h3");h.textContent=title;const actions=document.createElement("div");actions.className="lesson-actions";const a=document.createElement("a");a.href="https://www.canva.com/design/"+id+"/"+token+"/view";a.target="_blank";a.rel="noopener noreferrer";a.textContent="Abrir apresentação ↗";actions.append(tag,h);body.append(tag,h,actions);card.append(preview,body);grid.appendChild(card);const empty=grid.querySelector(".lesson-empty");if(empty)empty.remove();});})();<\/script>';
+document.open();document.write(chunks.join("") + fallback);document.close();
 }catch(e){document.body.textContent="Falha ao carregar o site: "+e.message}}
 )();
 </script></body></html>
