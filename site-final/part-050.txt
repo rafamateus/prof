@@ -25,7 +25,7 @@
     lessons.forEach(([grade,title,subject,id,token]) => {
       const grid = document.querySelector('[data-grade-grid="' + grade + '"]');
       if (!grid) return;
-      if (grid.dataset.staticLessonsRendered === "yes") return;
+      // Uma turma recebe várias aulas; não interromper o loop após o primeiro cartão.
       grid.dataset.staticLessonsRendered = "yes";
       const frame = "https://www.canva.com/design/" + id + "/" + token + "/view?embed";
       const open = "https://www.canva.com/design/" + id + "/" + token + "/view";
