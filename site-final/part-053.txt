@@ -1,0 +1,100 @@
+    els.adminLoginError.style.display = "block";
+  }
+});
+
+els.adminLogoutBtn?.addEventListener("click", async () => {
+  if (auth) await signOut(auth);
+});
+
+els.adminList?.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn || !auth?.currentUser || !ADMIN_UIDS.includes(auth.currentUser.uid)) return;
+
+  const item = btn.closest(".admin-item");
+  const id = item?.dataset.id;
+  const action = btn.dataset.action;
+  if (!id) return;
+
+  try {
+    btn.disabled = true;
+
+    if (action === "delete") {
+      if (!confirm("Excluir este depoimento definitivamente?")) return;
+      await deleteDoc(doc(db, "testimonials", id));
+    } else {
+      await updateDoc(doc(db, "testimonials", id), {
+        status: action,
+        moderatedAt: serverTimestamp(),
+        moderatedBy: auth.currentUser.uid
+      });
+    }
+
+    await Promise.all([
+      loadAdminTestimonials(auth.currentUser),
+      loadApprovedTestimonials()
+    ]);
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível concluir a ação. Confira as regras do Firestore.");
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// Aulas do Canva: capas comprimidas e armazenadas no Firestore (sem Firebase Storage).
+let selectedCoverData = "";
+let activeAdmin = null;
+
+function safeCanvaUrl(raw, allowEmbed = false) {
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:" || !/(^|\.)canva\.com$/i.test(u.hostname)) return "";
+    if (!u.pathname.includes("/design/")) return "";
+    if (allowEmbed && !u.searchParams.has("embed")) u.searchParams.set("embed", "");
+    return u.toString();
+  } catch { return ""; }
+}
+
+async function compressCover(file) {
+  if (!file || !/^image\/(png|jpeg|webp)$/.test(file.type)) throw new Error("Escolha uma imagem JPG, PNG ou WebP.");
+  if (file.size > 12 * 1024 * 1024) throw new Error("A imagem original deve ter no máximo 12 MB.");
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1100 / bitmap.width, 750 / bitmap.height);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close?.();
+  let quality = 0.78, data = canvas.toDataURL("image/jpeg", quality);
+  while (data.length > 520000 && quality > 0.42) { quality -= 0.08; data = canvas.toDataURL("image/jpeg", quality); }
+  if (data.length > 650000) throw new Error("A imagem ficou muito grande. Escolha uma imagem mais simples ou menor.");
+  return data;
+}
+
+els.lessonImage?.addEventListener("change", async () => {
+  try {
+    const file = els.lessonImage.files?.[0];
+    if (!file) return;
+    els.lessonFormStatus.textContent = "Otimizando imagem...";
+    selectedCoverData = await compressCover(file);
+    els.lessonImagePreview.src = selectedCoverData;
+    els.lessonImagePreview.style.display = "block";
+    els.lessonFormStatus.textContent = "Imagem pronta.";
+  } catch (err) { selectedCoverData = ""; els.lessonFormStatus.textContent = err.message; }
+});
+
+function renderLessons(items) {
+  const gradeKeys = ["6ano", "9ano", "1medio", "2medio", "3medio"];
+  const labels = {"6ano":"6º ano", "9ano":"9º ano", "1medio":"1º ano", "2medio":"2º ano", "3medio":"3º ano"};
+  const grids = Object.fromEntries(gradeKeys.map(key => [key, els.lessonGrid.querySelector(`[data-grade-grid="${key}"]`)]));
+  gradeKeys.forEach(key => { if (grids[key]) grids[key].innerHTML = '<div class="lesson-empty">As aulas desta turma aparecerão aqui.</div>'; });
+  const grouped = Object.fromEntries(gradeKeys.map(key => [key, []]));
+  items.forEach(item => { const key = gradeKeys.includes(item.grade) ? item.grade : "6ano"; grouped[key].push(item); });
+  gradeKeys.forEach(key => {
+    if (!grids[key]) return;
+    if (!grouped[key].length) {
+      grids[key].innerHTML = `<div class="lesson-empty">As aulas do ${labels[key]} aparecerão aqui. Aguarde as novidades!</div>`;
+      return;
+    }
+    grids[key].innerHTML = grouped[key].map(item => {
+      const title = escapeHtml(item.title || "Aula");
