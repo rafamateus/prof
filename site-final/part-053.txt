@@ -229,3 +229,4 @@ if (isConfigured) {
   if (els.lessonAdmin) els.lessonAdmin.style.display = "none";
 }
 loadLessons();
+loadApprovedTestimonials();
