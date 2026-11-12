@@ -2,9 +2,7 @@ G1mMmdgRnxpG4/AZVbMyPsQjkORBYGiBMd1Td85nuYbIqCGr8li016dTpdVMlqrhEZouUMikQdW5gbqo
 <section class="lessons-section" id="aulas">
   <div class="lessons-wrap">
     <div class="lessons-head">
-      <span class="lesson-subject">Conteúdos por série</span>
       <h2>Aulas e apresentações</h2>
-      <p>Explore as apresentações de Ciências e Biologia. Escolha sua série e abra a aula completa no Canva.</p>
     </div>
     <div class="grade-sections" id="lessonGrid">
       <section class="grade-section">
