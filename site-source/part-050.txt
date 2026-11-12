@@ -1,0 +1,100 @@
+
+// IMPORTANTE: substitua pelo UID real da sua conta Google autorizada.
+// Exemplo: const ADMIN_UIDS = ["abc123SEU_UIDxyz"];
+const ADMIN_UIDS = ["COLE_AQUI_O_UID_DO_PROFESSOR"];
+
+const els = {
+  form: document.getElementById("testimonialForm"),
+  name: document.getElementById("testimonialName"),
+  className: document.getElementById("testimonialClass"),
+  text: document.getElementById("testimonialText"),
+  honeypot: document.getElementById("testimonialWebsite"),
+  submit: document.getElementById("testimonialSubmit"),
+  success: document.getElementById("testimonialSuccess"),
+  setupNotice: document.getElementById("firebaseSetupNotice"),
+  cards: document.getElementById("testimonialCards"),
+  approvedCount: document.getElementById("approvedCount"),
+  adminModal: document.getElementById("adminModal"),
+  openAdmin: document.getElementById("openAdmin"),
+  closeAdmin: document.getElementById("closeAdmin"),
+  adminLocked: document.getElementById("adminLocked"),
+  adminPanel: document.getElementById("adminPanel"),
+  adminGoogleLoginBtn: document.getElementById("adminGoogleLoginBtn"),
+  adminLoginError: document.getElementById("adminLoginError"),
+  adminStatus: document.getElementById("adminStatus"),
+  adminIdentity: document.getElementById("adminIdentity"),
+  adminList: document.getElementById("adminList"),
+  adminLogoutBtn: document.getElementById("adminLogoutBtn")
+};
+
+const isConfigured =
+  firebaseConfig.apiKey !== "COLE_AQUI" &&
+  firebaseConfig.projectId !== "COLE_AQUI" &&
+  ADMIN_UIDS[0] !== "COLE_AQUI_O_UID_DO_PROFESSOR";
+
+let app, db, auth, provider;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatDate(value) {
+  try {
+    const date = value?.toDate ? value.toDate() : new Date(value);
+    return new Intl.DateTimeFormat("pt-BR").format(date);
+  } catch {
+    return "";
+  }
+}
+
+function showMessage(text, type = "success") {
+  if (!els.success) return;
+  els.success.textContent = text;
+  els.success.style.display = "block";
+  els.success.style.background =
+    type === "error" ? "rgba(122,38,48,.16)" : "rgba(31,111,56,.14)";
+  els.success.style.borderColor =
+    type === "error" ? "rgba(190,70,82,.35)" : "rgba(58,160,86,.35)";
+  els.success.style.color = type === "error" ? "#f1bec4" : "#c8f2d2";
+}
+
+function openModal() {
+  els.adminModal?.classList.add("open");
+  els.adminModal?.setAttribute("aria-hidden", "false");
+}
+function closeModal() {
+  els.adminModal?.classList.remove("open");
+  els.adminModal?.setAttribute("aria-hidden", "true");
+}
+
+els.openAdmin?.addEventListener("click", openModal);
+els.closeAdmin?.addEventListener("click", closeModal);
+els.adminModal?.addEventListener("click", (e) => {
+  if (e.target === els.adminModal) closeModal();
+});
+
+async function loadApprovedTestimonials() {
+  if (!isConfigured) {
+    els.setupNotice.style.display = "block";
+    els.cards.innerHTML =
+      '<div class="testimonial-empty">Os depoimentos aprovados aparecerão aqui após a configuração do Firebase.</div>';
+    els.approvedCount.textContent = "Aguardando configuração";
+    return;
+  }
+
+  try {
+    const q = query(
+      collection(db, "testimonials"),
+      where("status", "==", "approved"),
+      orderBy("createdAt", "desc"),
+      limit(4)
+    );
+    const snap = await getDocs(q);
+    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    els.approvedCount.textContent =
