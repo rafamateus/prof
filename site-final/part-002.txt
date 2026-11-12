@@ -26,7 +26,7 @@
   gap:8px;
   text-decoration:none;
 }
-@prof_rafamateus (max-width:760px){
+@media (max-width:760px){
   .testimonial-form{grid-template-columns:1fr}
   .testimonial-form .full,
   .testimonial-note,
