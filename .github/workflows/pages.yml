@@ -18,11 +18,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Preparar site
+      - name: Montar HTML final diretamente dos arquivos do site
         run: |
           mkdir -p _site
-          cp index.html _site/index.html
+          cat site-final/part-*.txt > _site/index.html
           cp -R site-final _site/site-final
+          test -s _site/index.html
+          grep -q '</html>' _site/index.html
       - name: Enviar artefato
         uses: actions/upload-pages-artifact@v3
         with:
