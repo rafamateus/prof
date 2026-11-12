@@ -74,6 +74,12 @@
   .cover{height:190px;min-height:0}
 }
 
+
+.lesson-actions a{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:9px;background:#1f6fbb;color:#fff;text-decoration:none;font-weight:800;min-height:42px}
+.lesson-actions a:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.lesson-cover-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#9ec7ee;background:radial-gradient(circle at 50% 30%,#214d78,#10243c 70%)}
+.lesson-cover-placeholder span{font-size:2.2rem}
+.lesson-subject{display:inline-block;color:#8fc4f5;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
 </style>
 <!-- Versão visual autocontida: avatar e capas incorporados no próprio HTML. -->
 </head>
