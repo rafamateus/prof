@@ -51,7 +51,7 @@ function safeCanvaUrl(raw, allowEmbed = false) {
     const validHost = /(^|\.)canva\.com$/i.test(u.hostname) || u.hostname === "canva.link";
     if (u.protocol !== "https:" || !validHost) return "";
     if (u.hostname !== "canva.link" && !u.pathname.includes("/design/")) return "";
-    if (allowEmbed && u.hostname !== "canva.link") { u.pathname = u.pathname.replace(/\/edit\/?$/, "/view"); u.search = ""; u.searchParams.set("embed", ""); }
+    if (allowEmbed && u.hostname !== "canva.link") { u.pathname = u.pathname.replace(/\/edit\/?$/, "/view"); u.search = "?embed"; }
     return u.toString();
   } catch { return ""; }
 }
@@ -103,7 +103,7 @@ function renderLessons(items) {
       const cover = item.coverData ? `<img class="lesson-cover" src="${item.coverData}" alt="Capa: ${title}" loading="lazy">` : `<div class="lesson-cover lesson-cover-placeholder"><span>✦</span><small>APRESENTAÇÃO</small></div>`;
       if (!url) return "";
       const embedUrl = safeCanvaUrl(item.embedUrl || url, true);
-      const preview = embedUrl ? `<div class="lesson-preview" style="position:relative;width:100%;aspect-ratio:16/9;background:#f3f4f6;overflow:hidden"><iframe src="${embedUrl}" title="Prévia da aula: ${title}" loading="lazy" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>` : cover;
+      const preview = embedUrl ? `<div class="lesson-preview" style="position:relative;width:100%;aspect-ratio:16/9;background:#f3f4f6;overflow:hidden"><iframe src="${embedUrl}" title="Prévia da aula: ${title}" loading="eager" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>` : cover;
       return `<article class="lesson-card">${preview}<div class="lesson-content"><span class="lesson-subject">${escapeHtml(item.subject || "Aula")}</span><h3>${title}</h3><p>${description}</p><div class="lesson-actions"><a href="${url}" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div></article>`;
     }).join("") || '<div class="lesson-empty">Nenhum link válido disponível nesta turma.</div>';
   });
