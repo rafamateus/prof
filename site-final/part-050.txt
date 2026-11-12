@@ -1,3 +1,45 @@
+<script>
+/* Renderização independente do Firebase: as aulas iniciais precisam aparecer
+   mesmo quando os módulos externos do Firebase não carregarem. */
+(function () {
+  const lessons = [
+    ["6ano","Contribuições da Ciência","Ciências","DAHE_yhcUgY","x175RsWgO16BAdGI4uxHuQ"],
+    ["6ano","Propriedades da Matéria","Ciências","DAHLEMsUWXM","25BtImklVJpnaXSNu06xaQ"],
+    ["6ano","Transformações da Matéria","Ciências","DAHN6ByyHCE","NFJqEsO5HNDufckf_1ZucA"],
+    ["6ano","Terra e Universo","Ciências","DAHRYhdxlxE","6Ub4fQAZyki522FS0v7lCw"],
+    ["6ano","Sistemas do Corpo Humano","Ciências","DAHZf9nmLb8","YIIEEb9JWEflxi7AwykssQ"],
+    ["9ano","Ondas","Física","DAHK4FEXNtA","jkaa5iSkji3JZeuoJYjEYQ"],
+    ["9ano","Ondas Sonoras","Física","DAHMMpKW8Ro","8P8vmg4SMMQAMFDUQOizjQ"],
+    ["9ano","Ondas Eletromagnéticas","Física","DAHNgm9-MjA","nzOcCVvsuF10a6V5kBWXaQ"],
+    ["9ano","Herança Genética","Ciências","DAGvcKqCmW0","N_1gHQHfJNMPXM_bSMIvdw"],
+    ["1medio","Membrana Plasmática","Biologia","DAGqDDIePrA","JG67f8o0jjY7L0b_66-agQ"],
+    ["1medio","Citoplasma","Biologia","DAGqJdR6fPg","pwwkKeXP_BtKrXNOig8PiA"],
+    ["1medio","Divisão Celular","Biologia","DAHPrlKuQvQ","yn7ca-zAfe_HrP9b8xWVCQ"],
+    ["1medio","Anatomia e Fisiologia dos Sistemas Reprodutores Humanos","Biologia","DAHU1-r9dEY","CbTrYk7zmKiZDu7kgA7ong"],
+    ["1medio","Métodos Contraceptivos","Biologia","DAHWIuVZMQw","q53W3gsT8uC2xoaHC25mSw"],
+    ["1medio","Metabolismo Energético","Biologia","DAHR2R260kg","vhh5svTiLwcw-FLIAi2CaQ"],
+    ["1medio","Infecções Sexualmente Transmissíveis","Biologia","DAHW0LO4rmw","rpoCS-EPVJ3CDP23RIQ7MA"]
+  ];
+  const escapeText = value => String(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  function render() {
+    lessons.forEach(([grade,title,subject,id,token]) => {
+      const grid = document.querySelector('[data-grade-grid="' + grade + '"]');
+      if (!grid) return;
+      if (grid.dataset.staticLessonsRendered === "yes") return;
+      grid.dataset.staticLessonsRendered = "yes";
+      const frame = "https://www.canva.com/design/" + id + "/" + token + "/view?embed";
+      const open = "https://www.canva.com/design/" + id + "/" + token + "/view";
+      const card = document.createElement("article");
+      card.className = "lesson-card";
+      card.innerHTML = '<div class="lesson-preview" style="position:relative;width:100%;aspect-ratio:16/9;background:#0b1b31;overflow:hidden"><iframe src="' + frame + '" title="Prévia da aula: ' + escapeText(title) + '" loading="lazy" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div><div class="lesson-content"><span class="lesson-subject">' + escapeText(subject) + '</span><h3>' + escapeText(title) + '</h3><div class="lesson-actions"><a href="' + open + '" target="_blank" rel="noopener noreferrer">Abrir apresentação ↗</a></div></div>';
+      if (grid.querySelector(".lesson-empty")) grid.innerHTML = "";
+      grid.appendChild(card);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render, {once:true});
+  else render();
+})();
+</script>
 
 
 
