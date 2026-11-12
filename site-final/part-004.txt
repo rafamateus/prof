@@ -83,8 +83,26 @@
 
 /* Avatar circular restaurado no cabeçalho */
 .brand-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;display:grid;place-items:center;border:1px solid #dbe8ff;background:#0a1930;color:#f4f7fb;font-size:25px;box-shadow:0 0 0 4px rgba(211,32,47,.12)}
+
+/* Remover somente a antiga galeria de materiais por ano (capas de PDFs de 2026) */
+#materiais{display:none!important}
+/* Recuperar a foto do avatar no cabeçalho usando a mesma imagem já exibida no perfil */
+.brand-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;object-fit:cover;display:block;border:1px solid #dbe8ff;box-shadow:0 0 0 4px rgba(211,32,47,.12)}
 </style>
 <!-- Versão visual autocontida: avatar e capas incorporados no próprio HTML. -->
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  const source=document.querySelector('.avatarStage img, .aboutAvatar');
+  const target=document.querySelector('.brand-avatar');
+  if(source && target){
+    const avatar=document.createElement('img');
+    avatar.className='brand-avatar';
+    avatar.src=source.currentSrc || source.src;
+    avatar.alt='Avatar de Rafael Mateus';
+    target.replaceWith(avatar);
+  }
+});
+</script>
 </head>
 <body>
 <div class="topbar"><div class="wrap"><span>✉ contato futuro de Rafael Mateus</span><div class="social"><span>▶</span><span>◎</span><span>◉</span></div></div></div>
