@@ -1,0 +1,100 @@
+        </div>
+        <div class="testimonial-cards" id="testimonialCards">
+          <div class="testimonial-empty">Carregando depoimentos...</div>
+        </div>
+        <div class="admin-entry">
+          <button type="button" id="openAdmin">Acesso do professor</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<div class="admin-modal" id="adminModal" aria-hidden="true">
+  <div class="admin-dialog">
+    <div class="admin-dialog-header">
+      <h3>Painel de moderação</h3>
+      <button class="admin-close" id="closeAdmin" aria-label="Fechar">×</button>
+    </div>
+    <div class="admin-body">
+      <div id="adminLocked">
+        <p style="color:#9aa8b4;margin-top:0">
+          Entre com a conta Google autorizada do professor. Alunos e visitantes não têm acesso aos depoimentos pendentes.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="adminGoogleLoginBtn" type="button" style="border:0;border-radius:10px;padding:12px 16px;font-weight:800;cursor:pointer;background:#173f6b;color:#fff">
+            Entrar com Google
+          </button>
+        </div>
+        <p id="adminLoginError" style="display:none;color:#e18a94;font-size:.86rem;margin-bottom:0"></p>
+      </div>
+
+      <div id="adminPanel" style="display:none">
+        <div class="admin-toolbar">
+          <div>
+            <div class="status" id="adminStatus">Carregando...</div>
+            <div id="adminIdentity" style="font-size:.78rem;color:#6f7f8d;margin-top:4px"></div>
+          </div>
+          <button id="adminLogoutBtn" type="button">Sair</button>
+        </div>
+        <div class="admin-list" id="adminList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<section id="contato" style="padding:64px 7%;background:#06101e;">
+  <div style="max-width:1180px;margin:auto;">
+    <h2>Contato</h2>
+    <p>Entre em contato pelos canais abaixo.</p>
+    
+<div class="contact-social">
+  <a href="mailto:rafael.mateus@prof_rafamateus">✉ rafael.mateus@prof_rafamateus</a>
+  <a href="https://www.instagram.com/prof_rafamateus/" target="_blank" rel="noopener">◎ @prof_rafamateus</a>
+</div>
+
+  </div>
+</section>
+<footer id="contato"><div class="wrap foot"><span>© 2026 Rafael Mateus • Educação, Ciências e Jogos</span><span>Feito para crescer ano após ano.</span></div></footer>
+<script>
+document.querySelectorAll('.yearTabs button').forEach(b=>b.addEventListener('click',()=>{if(b.disabled)return;document.querySelectorAll('.yearTabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+</script>
+
+
+
+
+
+
+
+<script type="module">
+/*
+  ============================================================
+  CONFIGURAÇÃO DO FIREBASE
+  1) Crie um projeto no Firebase.
+  2) Adicione um app Web.
+  3) Cole abaixo o objeto firebaseConfig fornecido pelo console.
+  4) Depois de entrar como professor pela primeira vez, copie seu UID
+     no Firebase Authentication e coloque-o em ADMIN_UIDS.
+  ============================================================
+*/
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, getDocs, query, where,
+  orderBy, serverTimestamp, doc, updateDoc, deleteDoc, limit
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
