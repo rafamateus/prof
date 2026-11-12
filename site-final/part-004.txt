@@ -32,6 +32,48 @@
 
 
 .grade-sections{display:grid;gap:22px;margin-top:24px}.grade-section{border:1px solid #203a5a;background:linear-gradient(180deg,rgba(11,31,57,.72),rgba(5,16,31,.88));border-radius:14px;padding:20px}.grade-heading{display:flex;align-items:baseline;gap:12px;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid #284666}.grade-heading span{font-size:23px;font-weight:900;color:#ff3440}.grade-heading small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#a9b5c7}.grade-section .lesson-grid{margin-top:0}
+
+/* Ajustes de leitura e navegação em telas verticais */
+@media(max-width:620px){
+  .wrap{width:min(100% - 28px,560px)}
+  .hero,.heroGrid{min-height:0}
+  .heroGrid{padding:34px 0 20px}
+  .hero h1{font-size:clamp(2.25rem,10vw,3rem);line-height:1.04}
+  .hero p{font-size:1rem;line-height:1.6}
+  .avatarStage{height:245px;margin-top:12px}
+  .avatarStage img{max-height:235px}
+  .avatarRing{width:205px;height:205px}
+  .section{padding:32px 0}
+  .sectionTitle h2,.about h2{font-size:1.65rem}
+  .yearTabs{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .yearTabs button{padding:10px 8px}
+  .yearBlock{padding:12px;border-radius:12px}
+  .materials,.features,.gameGrid{grid-template-columns:minmax(0,1fr);gap:13px}
+  .card{grid-template-columns:1fr;min-height:0}
+  .cover{height:auto;aspect-ratio:16/9;min-height:0}
+  .cardBody{padding:15px}
+  .card h3{font-size:1.12rem}
+  .card p{font-size:.9rem;line-height:1.5}
+  .cardActions .btn{flex:1 1 auto}
+  .grade-section{padding:13px}
+  .grade-heading{flex-wrap:wrap;gap:5px 10px}
+  .lesson-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+  .lesson-card{min-width:0}
+  .lesson-cover{height:auto;aspect-ratio:16/9}
+  .lesson-content{padding:14px}
+  .lesson-embed{aspect-ratio:16/10}
+  .lesson-actions{display:grid;grid-template-columns:1fr}
+  .lesson-actions button{width:100%;min-height:44px}
+  .testimonial-form,.testimonials-grid{grid-template-columns:minmax(0,1fr)}
+  .testimonials-section,.lessons-section{padding:38px 0}
+  .admin-dialog{margin:0 auto}
+}
+@media(min-width:621px) and (max-width:900px){
+  .materials,.features,.gameGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card{grid-template-columns:1fr}
+  .cover{height:190px;min-height:0}
+}
+
 </style>
 <!-- Versão visual autocontida: avatar e capas incorporados no próprio HTML. -->
 </head>
