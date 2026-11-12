@@ -1,0 +1,100 @@
+.testimonial-actions{
+  grid-column:1/-1;display:flex;justify-content:space-between;
+  align-items:center;gap:16px;flex-wrap:wrap
+}
+.testimonial-privacy{font-size:.8rem;color:#82909d;max-width:520px}
+.testimonial-submit{
+  border:0;border-radius:12px;padding:12px 20px;
+  font-weight:800;cursor:pointer;background:#1f6f38;color:#fff
+}
+.testimonial-submit:hover{filter:brightness(1.08)}
+.testimonial-success{
+  display:none;margin-top:16px;padding:13px 15px;border-radius:12px;
+  background:rgba(31,111,56,.14);border:1px solid rgba(58,160,86,.35);
+  color:#c8f2d2
+}
+
+.public-testimonials-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin-bottom:16px
+}
+.public-testimonials-count{
+  font-size:.75rem;color:#8fa0af;border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;padding:5px 9px
+}
+.testimonial-cards{display:grid;gap:12px}
+.testimonial-card{
+  padding:15px;border-radius:15px;
+  background:linear-gradient(180deg, rgba(8,23,40,.96), rgba(7,18,31,.96));
+  border:1px solid rgba(255,255,255,.07)
+}
+.testimonial-card p{
+  margin:0 0 10px;color:#e8edf2;line-height:1.5;font-size:.94rem
+}
+.testimonial-card footer{
+  font-size:.8rem;color:#91a1af;display:flex;justify-content:space-between;gap:10px
+}
+.testimonial-card .student-name{color:#d6dee6;font-weight:700}
+.testimonial-empty{
+  padding:20px 8px;color:#82909d;font-size:.9rem;text-align:center
+}
+
+.admin-entry{
+  margin-top:14px;text-align:right
+}
+.admin-entry button{
+  background:transparent;color:#6f7d89;border:0;padding:0;
+  font-size:.76rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px
+}
+.admin-entry button:hover{color:#aeb8c2}
+
+/* Modal do professor */
+.admin-modal{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(5px);
+  padding:20px;overflow:auto
+}
+.admin-modal.open{display:flex;align-items:flex-start;justify-content:center}
+.admin-dialog{
+  width:min(980px,100%);margin:4vh auto;
+  background:#071321;border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.45);
+  overflow:hidden
+}
+.admin-dialog-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08)
+}
+.admin-dialog-header h3{margin:0}
+.admin-close{
+  border:0;background:transparent;color:#aab5bf;font-size:1.5rem;cursor:pointer
+}
+.admin-body{padding:20px}
+.admin-login{
+  display:grid;grid-template-columns:1fr auto;gap:10px;max-width:460px
+}
+.admin-login input{
+  border:1px solid rgba(255,255,255,.11);border-radius:10px;
+  background:#081728;color:#fff;padding:12px 13px
+}
+.admin-login button,
+.admin-toolbar button{
+  border:0;border-radius:10px;padding:11px 15px;font-weight:800;cursor:pointer
+}
+.admin-login button{background:#173f6b;color:#fff}
+.admin-toolbar{
+  display:flex;justify-content:space-between;gap:12px;
+  align-items:center;flex-wrap:wrap;margin-bottom:16px
+}
+.admin-toolbar .status{color:#93a2af;font-size:.88rem}
+.admin-toolbar button{background:#15283d;color:#dce5ec}
+.admin-list{display:grid;gap:12px}
+.admin-item{
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  padding:15px;background:#081728
+}
+.admin-item-top{
+  display:flex;justify-content:space-between;gap:12px;align-items:flex-start
+}
+.admin-meta{color:#8fa0af;font-size:.8rem;margin-top:4px}
+.admin-item p{margin:12px 0;color:#edf2f6;line-height:1.5}
