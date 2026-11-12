@@ -1,0 +1,99 @@
+      const badge =
+        status === "approved"
+          ? '<span class="badge approved">Aprovado</span>'
+          : status === "rejected"
+          ? '<span class="badge rejected">Rejeitado</span>'
+          : '<span class="badge pending">Pendente</span>';
+
+      return `
+        <div class="admin-item" data-id="${escapeHtml(item.id)}">
+          <div class="admin-item-top">
+            <div>
+              <strong>${escapeHtml(item.name || "Anônimo")}</strong>
+              <div class="admin-meta">
+                ${escapeHtml(item.className || "Turma não informada")}
+                · ${formatDate(item.createdAt)}
+              </div>
+            </div>
+            ${badge}
+          </div>
+          <p>${escapeHtml(item.testimonial)}</p>
+          <div class="admin-item-actions">
+            <button class="btn-approve" data-action="approved">Aprovar</button>
+            <button class="btn-hide" data-action="pending">Ocultar</button>
+            <button class="btn-reject" data-action="rejected">Rejeitar</button>
+            <button class="btn-delete" data-action="delete">Excluir</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+    els.adminList.innerHTML =
+      '<div class="testimonial-empty">Erro ao carregar. Confira sua autorização e as regras do Firestore.</div>';
+  }
+}
+
+els.adminGoogleLoginBtn?.addEventListener("click", async () => {
+  if (!isConfigured) {
+    els.adminLoginError.textContent =
+      "Primeiro configure firebaseConfig e o UID do professor no HTML.";
+    els.adminLoginError.style.display = "block";
+    return;
+  }
+
+  try {
+    els.adminLoginError.style.display = "none";
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    console.error(error);
+    els.adminLoginError.textContent =
+      "Não foi possível entrar com Google. Confira se o provedor Google foi ativado no Firebase Authentication.";
+    els.adminLoginError.style.display = "block";
+  }
+});
+
+els.adminLogoutBtn?.addEventListener("click", async () => {
+  if (auth) await signOut(auth);
+});
+
+els.adminList?.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn || !auth?.currentUser || !ADMIN_UIDS.includes(auth.currentUser.uid)) return;
+
+  const item = btn.closest(".admin-item");
+  const id = item?.dataset.id;
+  const action = btn.dataset.action;
+  if (!id) return;
+
+  try {
+    btn.disabled = true;
+
+    if (action === "delete") {
+      if (!confirm("Excluir este depoimento definitivamente?")) return;
+      await deleteDoc(doc(db, "testimonials", id));
+    } else {
+      await updateDoc(doc(db, "testimonials", id), {
+        status: action,
+        moderatedAt: serverTimestamp(),
+        moderatedBy: auth.currentUser.uid
+      });
+    }
+
+    await Promise.all([
+      loadAdminTestimonials(auth.currentUser),
+      loadApprovedTestimonials()
+    ]);
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível concluir a ação. Confira as regras do Firestore.");
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+if (isConfigured) {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  auth = getAuth(app);
+  provider = new GoogleAuthProvider();
