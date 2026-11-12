@@ -1,0 +1,20 @@
+<script>
+/* Ajustes de navegação solicitados após a revisão do site. */
+(function () {
+  const menu = document.querySelector("header .menu");
+  if (menu) {
+    if (!menu.querySelector('a[href="#aulas"]')) {
+      const aulas = document.createElement("a");
+      aulas.href = "#aulas";
+      aulas.textContent = "AULAS";
+      const sobre = menu.querySelector('a[href="#sobre"]');
+      if (sobre && sobre.nextSibling) sobre.parentNode.insertBefore(aulas, sobre.nextSibling);
+      else menu.appendChild(aulas);
+    }
+    menu.querySelectorAll(".searchBtn").forEach(button => button.remove());
+  }
+
+  const explore = document.querySelector(".hero .cta a.btn.red");
+  if (explore) explore.href = "#aulas";
+})();
+</script>
