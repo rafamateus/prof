@@ -48,13 +48,13 @@ let activeAdmin = null;
 function safeCanvaUrl(raw, allowEmbed = false) {
   try {
     const u = new URL(raw);
-    if (u.protocol !== "https:" || !/(^|\.)canva\.com$/i.test(u.hostname)) return "";
-    if (!u.pathname.includes("/design/")) return "";
-    if (allowEmbed && !u.searchParams.has("embed")) u.searchParams.set("embed", "");
+    const validHost = /(^|\\.)canva\\.com$/i.test(u.hostname) || u.hostname === "canva.link";
+    if (u.protocol !== "https:" || !validHost) return "";
+    if (u.hostname !== "canva.link" && !u.pathname.includes("/design/")) return "";
+    if (allowEmbed && u.hostname !== "canva.link" && !u.searchParams.has("embed")) u.searchParams.set("embed", "");
     return u.toString();
   } catch { return ""; }
 }
-
 async function compressCover(file) {
   if (!file || !/^image\/(png|jpeg|webp)$/.test(file.type)) throw new Error("Escolha uma imagem JPG, PNG ou WebP.");
   if (file.size > 12 * 1024 * 1024) throw new Error("A imagem original deve ter no máximo 12 MB.");
